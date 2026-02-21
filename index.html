@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test For Scratchers</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f1f3f4;
+  margin: 0;
+  padding: 20px;
+}
+
+.container {
+  max-width: 750px;
+  margin: auto;
+}
+
+.card {
+  background: white;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  margin-bottom: 20px;
+}
+
+h1 { text-align: center; }
+
+h2 {
+  border-bottom: 2px solid #1a73e8;
+  padding-bottom: 5px;
+}
+
+/* ===== 説明文（会話文）のスタイル ===== */
+.story {
+  background: #f8f9fa;
+  border-left: 4px solid #1a73e8;
+  border-radius: 0 6px 6px 0;
+  padding: 14px 18px;
+  margin: 16px 0;
+  color: #333;
+  line-height: 1.8;
+  font-size: 0.97em;
+}
+
+.story-label {
+  font-size: 0.78em;
+  font-weight: bold;
+  color: #1a73e8;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+/* ===== 問題のスタイル ===== */
+.question {
+  margin: 20px 0;
+  background: #fff8e1;
+  border: 1px solid #f9a825;
+  border-top: 4px solid #f9a825;
+  border-radius: 6px;
+  padding: 14px 16px;
+}
+
+.question > p:first-child {
+  font-weight: bold;
+  color: #555;
+  margin-top: 0;
+}
+
+button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background: #1a73e8;
+  color: white;
+}
+
+button:hover { background: #1558b0; }
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.hidden { display: none; }
+
+.correct { color: green; }
+.incorrect { color: red; }
+
+.progress {
+  height: 6px;
+  background: #ddd;
+  border-radius: 3px;
+  margin-bottom: 15px;
+}
+
+.progress-bar {
+  height: 100%;
+  background: #1a73e8;
+  width: 0%;
+  border-radius: 3px;
+}
+
+.options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.option-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+  text-align: center;
+  background: white;
+}
+
+.option-card img {
+  max-width: 100%;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.option-card input {
+  display: none;
+}
+
+.option-card:hover {
+  border-color: #1a73e8;
+}
+
+.option-card input:checked + img {
+  outline: 3px solid #1a73e8;
+  border-radius: 6px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<h1>Test For Scratchers</h1>
+
+<div class="progress">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<!-- セクション1: イントロ -->
+<div class="card section" id="section1">
+  <h2>このテストについて。</h2>
+  <p>このテストは、scratcherによるscratcherのscratchのためのテストです。</p>
+  <p>大問は1から4まであり、100点満点です。</p>
+  <p>次へ ボタンをクリックすると、大問1に入ります。</p>
+
+  <div class="nav">
+    <div></div>
+    <button onclick="nextSection(1)">次へ</button>
+  </div>
+</div>
+
+<!-- セクション2: 大問1 -->
+<div class="card section hidden" id="section2">
+  <h2>大問1</h2>
+
+  <h3>たけるくんと先生がコンピューター室で話しています。<br>問題を読み、答えなさい。</h3>
+
+  <div class="story">
+    <div class="story-label">📖 場面</div>
+    たけるくん)　僕、あるゲームを作ろうと思っているんです。<br>
+    先生)　どういうゲームですか？<br>
+    たけるくん)　合図が出たらにクリックして、どれだけズレが少ないかを競うゲームです。<br>
+    先生)　いいですね！そのような仕組みが簡単なゲームはscratchで作成するのがおすすめです。早速作ってみましょう。<br>
+    たけるくん)　了解です。ええと...まずは旗が押されたとき...できました！<br>
+    先生)　速いですね！では動かしてみましょう。...あれ、正しく動作しませんね。<br>
+    「画面をクリック!」は表示されますが、画面をクリックしても結果が表示されません。スクリプトを見せてください。(あ)
+  </div>
+
+  <div class="question">
+    <p>(1) (あ)の時点でのスクリプトとしてもっとも正しいものを1つ選びなさい。ただし、正しいものがない場合は5を選べ。</p>
+    <div class="options">
+      <label class="option-card">
+        <input type="radio" name="q1" value="1">
+        <img src="img1.png" alt="">
+        <span>1</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q1" value="2">
+        <img src="img2.png" alt="">
+        <span>2</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q1" value="3">
+        <img src="img3.png" alt="">
+        <span>3</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q1" value="4">
+        <img src="img4.png" alt="">
+        <span>4</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q1" value="5">
+        <span>5</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="story">
+    <div class="story-label">📖 場面</div>
+    先生)　このスクリプトでは正しく動作しませんね。先生が修正してあげましょう。<br>
+    たけるくん)　ありがとうございます。ちゃんと動くようになりました。<br>
+    先生)　ですがこれだと味気ないですね。更にいろんな機能を追加してみましょう。<br>
+    たけるさんは、「クラウド変数」を知っていますか？<br>
+    たけるくん)　はい。他のユーザーと値をやり取りできる変数のことですよね。<br>
+    先生)　そのとおりです。そのクラウド変数を使って、このゲームをオンライン対戦ゲームにすれば面白いと思いませんか？<br>
+    たけるくん)　すごくいいですね！やってみたいです！<br>
+    先生)　それでは一緒に作ってみましょう。<br>
+    ☁player1、☁player2、☁counterの3つのクラウド変数を作成しました。それぞれのクラウド変数の初期値は0です。プレイヤーが旗を押したとき、☁counterの値を1増やします。☁counterが2になったらゲームを開始します。<br>
+    たけるくん)　なるほど。それで、☁player1、2はそれぞれのユーザーの結果の値にすればいいのですね。作ってみます...できました！<br>
+    先生)　スクリプトを見せてください...これでは正しく動作しませんね。クラウド変数は文字が使用できないので、小数点のピリオドをなくさなければなりません。タイマーの値は少数第2位までなので、このようにしましょう。(い)
+  </div>
+
+  <div class="question">
+    <p>(2) このスクリプトは、(い)の時点でのスクリプトの一部である。これの下に続くスクリプトとしてもっとも正しいものを1つ選びなさい。ただし、正しいものがない場合は5を選べ。</p>
+    <img src="img5.png" alt="">
+    <div class="options">
+      <label class="option-card">
+        <input type="radio" name="q2" value="1">
+        <img src="img6.png" alt="">
+        <span>1</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q2" value="2">
+        <img src="img7.png" alt="">
+        <span>2</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q2" value="3">
+        <img src="img8.png" alt="">
+        <span>3</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q2" value="4">
+        <img src="img9.png" alt="">
+        <span>4</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q2" value="5">
+        <span>5</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="story">
+    <div class="story-label">📖 場面</div>
+    先生)　このスクリプトの一番下に「☁counterを0にする」というブロックを追加しておいてください。これで正しく動作するはずです。<br>
+    たけるくん)　やった！実際に遊んでみます。...あれ。<br>
+    先生)　どうしましたか？<br>
+    たけるくん)　友達とプレイしてみたのですが、僕の画面と友達の画面の動作のタイミングが少しズレています。<br>
+    先生)　いいところに気づきましたね。クラウド変数は変更が反映されるまで時間がかかるのです。せっかくなので、そのタイムラグもなくしてみましょう。<br>
+    たけるくん)　できるのですか？<br>
+    先生)　できます。「2000年からの日数」を使用します。2000年からの日数の値は全てのユーザーで共通しています。この仕組みを使って作ってみましょう。まず、2000年からの日数の値を2000年からのティック数に変換します。ティックとは、ゲーム内の世界が更新される時間の最小単位のことで、scratchでは1秒は30ティックです。(3)<br>
+    2000年からのティック数に変換する部分は定義ブロックで定義しましょう。<br>
+    たけるくん)　うーんと、最初の部分は変わらないですね。この、タイマーの部分を変えるのですね。<br>
+    あと、3人目のユーザーが来たとき用の処理も追加して...できました。<br>
+    先生)　むだがなく完璧ですね。デバッグとして先生と遊んでみましょう。<br>
+    たけるくん)　ちゃんと動作しますね。先生、協力してくれてありがとうございました！
+  </div>
+
+  <div class="question">
+    <p>(3) 2000年からの日数を2000年からのティック数に変換するにはどのように計算すればよいか。もっとも正しいものを1つ選べ。ただし、正しいものがない場合は「正しいものはない。」を選べ。</p>
+    <div class="options">
+      <label class="option-card">
+        <input type="radio" name="q3" value="1">
+        <span>2000年からの日数 × 24(時間) × 60(分) × 60(秒) × 30</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q3" value="2">
+        <span>2000年からの日数 × 24(時間) × 60(分) × 60(秒) × 60</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q3" value="3">
+        <span>2000年からの日数 × 24(時間) × 60(分) × 60(秒) ÷ 30</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q3" value="4">
+        <span>2000年からの日数 × 24(時間) × 60(分) × 60(秒) ÷ 60</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q3" value="5">
+        <span>2000年からの日数 ÷ 24(時間) × 60(分) × 60(秒) × 30</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q3" value="6">
+        <span>2000年からの日数 ÷ 24(時間) × 60(分) × 60(秒) × 60</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q3" value="7">
+        <span>2000年からの日数 ÷ 24(時間) × 60(分) × 60(秒) ÷ 30</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q3" value="8">
+        <span>2000年からの日数 ÷ 24(時間) × 60(分) × 60(秒) ÷ 60</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q3" value="9">
+        <span>正しいものはない。</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="question">
+    <p>(4) 最終的なスクリプトとしてもっとも正しいものを1つ選びなさい。なお、スクリプトは一部...で省略している。</p>
+    <div class="options">
+      <label class="option-card">
+        <input type="radio" name="q4" value="1">
+        <img src="img10.png" alt="">
+        <span>1</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q4" value="2">
+        <img src="img11.png" alt="">
+        <span>2</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q4" value="3">
+        <img src="img12.png" alt="">
+        <span>3</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q4" value="4">
+        <img src="img13.png" alt="">
+        <span>4</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q4" value="5">
+        <span>5</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="question">
+    <p>(5) 勝ち負けの精度を更に良くするためにはどうすればよいか。最も正しいものを選びなさい。ただし、正しいものがない場合は「正しいものはない。」を選びなさい。</p>
+    <div class="options">
+      <label class="option-card">
+        <input type="radio" name="q5" value="1">
+        <span>2000年からのティック数に100を足す</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q5" value="2">
+        <span>2000年からのティック数を100で割る</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q5" value="3">
+        <span>2000年からのティック数から100引く</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q5" value="4">
+        <span>2000年からのティック数を100倍する</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q5" value="5">
+        <span>正しいものはない。</span>
+      </label>
+    </div>
+  </div>
+
+  <p>大問1は以上です。</p>
+
+  <div class="nav">
+    <button onclick="prevSection(2)">戻る</button>
+    <button onclick="nextSection(2)">次へ</button>
+  </div>
+</div>
+
+<!-- セクション3: 大問2 -->
+<div class="card section hidden" id="section3">
+  <h2>大問2</h2>
+  <h3>問題を読み、答えなさい。</h3>
+
+  <div class="story">
+    <div class="story-label">📖 説明</div>
+    ゆめさんは、scratchで使用するデータ交換フォーマット、SSONを作っています。<br>
+    次の画像は、そのSSONをデコードする関数です。<br>
+    ①, ②を答えなさい。ただし、空白のものはnullと表す。
+  </div>
+
+  <img src="img14.png" alt="" style="max-width:100%; margin: 10px 0;">
+
+  <div class="question">
+    <p>① UN/player1/scene/home/ask/<br>
+      このSSONテキストをデコードしたときのresultを1番から順に読んだときのものとしてもっとも正しいものを1つ選びなさい。<br>
+      ただし、正しいものがない場合は、「正しいものはない。」を選択しなさい。
+    </p>
+    <div class="options">
+      <label class="option-card">
+        <input type="radio" name="q6" value="1">
+        <span>UN, player1, scene, home, ask</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q6" value="2">
+        <span>UN, scene, ask, player1, home</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q6" value="3">
+        <span>UN, player1, scene, home, ask, null</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q6" value="4">
+        <span>UN, scene, ask, player1, home, null</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q6" value="5">
+        <span>正しいものはない。</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="question">
+    <p>② エンコード関数としてもっとも正しいものを1つ選びなさい。ただし、正しいものがない場合は5を選びなさい。</p>
+    <div class="options">
+      <label class="option-card">
+        <input type="radio" name="q7" value="1">
+        <span>1</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q7" value="2">
+        <span>2</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q7" value="3">
+        <span>3</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q7" value="4">
+        <span>4</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q7" value="5">
+        <span>正しいものはない。</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="question">
+    <p>(2) 旗を押したときのcounterの値を入力しなさい。</p>
+    <img src="img15.png" alt="" style="max-width:100%; margin-bottom:10px;">
+    <input type="number" name="q8" style="padding:6px; border:1px solid #ccc; border-radius:4px; width:120px;">
+  </div>
+
+  <div class="question">
+    <p>(3) 1+2+3+4+5+6+7+8+9+10を計算するものとしてもっとも正しいものを1つ選びなさい。ただし、正しいものがない場合は5を選びなさい。</p>
+    <div class="options">
+      <label class="option-card">
+        <input type="radio" name="q9" value="1">
+        <img src="img16.png" alt="">
+        <span>1</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q9" value="2">
+        <img src="img17.png" alt="">
+        <span>2</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q9" value="3">
+        <img src="img18.png" alt="">
+        <span>3</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q9" value="4">
+        <img src="img19.png" alt="">
+        <span>4</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q9" value="5">
+        <span>正しいものはない。</span>
+      </label>
+    </div>
+  </div>
+
+  <p>大問2は以上です。</p>
+
+  <div class="nav">
+    <button onclick="prevSection(3)">戻る</button>
+    <button onclick="nextSection(3)">次へ</button>
+  </div>
+</div>
+
+<!-- セクション4: 大問3 -->
+<div class="card section hidden" id="section4">
+  <h2>大問3</h2>
+  <h3>問題を読み、答えなさい。</h3>
+
+  <div class="story">
+    <div class="story-label">📖 説明</div>
+    まもるくんは256×256のRPGマップを、タイルマップ式で描画するプログラムを作ろうとしている。<br>
+    タイルマップとは、小さな画像（タイル）をマス目状に並べて、1つの大きなマップを作る仕組みのことである。<br>
+    まず、描画を簡単にするためにタイルの座標データをリストbx、byに生成するスクリプトを作った。
+  </div>
+
+  <img src="img20.png" alt="" style="max-width:100%; margin: 10px 0;">
+
+  <div class="story">
+    <div class="story-label">📖 説明</div>
+    マップのデータは、<br>
+    0→地面、1→壁としてデータ化してリストmap dataに保存されている。<br>
+    まもるくんは次にマップデータのデコードして、タイルごとのデータをリストbcに格納する関数を作成した。
+  </div>
+
+  <img src="img21.png" alt="" style="max-width:100%; margin: 10px 0;">
+
+  <div class="question">
+    <p>(1) ある1つのタイルの属性を「地面(0)」から「壁(1)」に変更したい。しかし、配列全体を毎回作り直すと65,536(256×256)回の処理が必要になってしまう。<br>
+      そこで、あらかじめ mapdata を幅 w マスごとに分割（スライス）して保存しておくことにする。<br>
+      タイルが変更されたときは：<br>
+      1, そのタイルが含まれるスライスだけを書き換える<br>
+      2, すべてのスライスを連結して1つの配列に戻す<br>
+      とする。<br>
+      スライス幅 w は 65,536 を割り切る整数とするとき、1回のタイル変更にかかる処理回数を最小にするためには、スライス幅 w を何マスにすればよいか求めよ。
+    </p>
+    <input type="number" name="q10" style="padding:6px; border:1px solid #ccc; border-radius:4px; width:120px;">
+  </div>
+
+  <div class="question">
+    <p>(2) (1)の方法を用いることで、配列全体を作り直す方法の何倍高速化することができたか。</p>
+    <input type="number" name="q11" style="padding:6px; border:1px solid #ccc; border-radius:4px; width:120px;">
+  </div>
+
+  <div class="question">
+    <p>(3) スライス機能を追加した関数「マップデータのデコード」としてもっとも正しいものを1つ選びなさい。ただし、正しいものがない場合は5を選びなさい。</p>
+    <div class="options">
+      <label class="option-card">
+        <input type="radio" name="q12" value="1">
+        <img src="img22.png" alt="">
+        <span>1</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q12" value="2">
+        <img src="img23.png" alt="">
+        <span>2</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q12" value="3">
+        <img src="img24.png" alt="">
+        <span>3</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q12" value="4">
+        <img src="img25.png" alt="">
+        <span>4</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q12" value="5">
+        <span>5</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="story">
+    <div class="story-label">📖 説明</div>
+    次に、まもるくんは画面を描画する関数を作成した。<br>
+    関数画面描画は、毎フレーム実行する。<br>
+    また、新しい変数camera_X, camera_Y, player_X, player_Yを作成した。<br>
+    下の図は、関数画面描画のスクリプトである。
+  </div>
+
+  <img src="img26.png" alt="" style="max-width:100%; margin: 10px 0;">
+
+  <div class="question">
+    <p>ああああ</p>
+    <div class="options">
+      <label class="option-card">
+        <input type="radio" name="q13" value="1">
+        <img src="img27.png" alt="">
+        <span>1</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q13" value="2">
+        <img src="img28.png" alt="">
+        <span>2</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q13" value="3">
+        <img src="img29.png" alt="">
+        <span>3</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q13" value="4">
+        <img src="img30.png" alt="">
+        <span>4</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q13" value="5">
+        <span>5</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button onclick="prevSection(4)">戻る</button>
+    <button onclick="showResult()">提出</button>
+  </div>
+</div>
+
+<!-- 結果 -->
+<div class="card hidden" id="resultSection">
+  <h2>結果</h2>
+  <div id="resultText"></div>
+</div>
+
+</div>
+
+<script>
+const totalSections = 4;
+
+function updateProgress(section) {
+  const percent = (section - 1) / (totalSections - 1) * 100;
+  document.getElementById("progressBar").style.width = percent + "%";
+}
+
+function nextSection(current) {
+  document.getElementById("section" + current).classList.add("hidden");
+  document.getElementById("section" + (current + 1)).classList.remove("hidden");
+  updateProgress(current + 1);
+  window.scrollTo(0, 0);
+}
+
+function prevSection(current) {
+  document.getElementById("section" + current).classList.add("hidden");
+  document.getElementById("section" + (current - 1)).classList.remove("hidden");
+  updateProgress(current - 1);
+  window.scrollTo(0, 0);
+}
+
+function showResult() {
+  let score = 0;
+  let total = 8;
+
+  if (document.querySelector('[name="q1"]:checked')?.value == "5") score++;
+  if (document.querySelector('[name="q2"]:checked')?.value == "b") score++;
+  if (document.querySelector('[name="q3"]:checked')?.value == "10") score++;
+  if (document.querySelector('[name="q4"]:checked')?.value == "3776") score++;
+  if (document.querySelector('[name="q5"]:checked')?.value == "5") score++;
+  if (document.querySelector('[name="q6"]:checked')?.value == "9") score++;
+  if (document.querySelector('[name="q7"]:checked')?.value == "dog") score++;
+  if (document.querySelector('[name="q8"]')?.value == "15") score++;
+
+  document.getElementById("section4").classList.add("hidden");
+  document.getElementById("resultSection").classList.remove("hidden");
+
+  document.getElementById("resultText").innerHTML =
+    "<p>あなたの点数：<strong>" + score + " / " + total + "</strong></p>";
+}
+</script>
+
+</body>
+</html>
