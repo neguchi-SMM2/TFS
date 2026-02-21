@@ -185,7 +185,7 @@ button:hover { background: #1558b0; }
   <h3>たけるくんと先生がコンピューター室で話しています。<br>問題を読み、答えなさい。</h3>
 
   <div class="story">
-    <div class="story-label">📖 場面</div>
+    <div class="story-label">場面</div>
     たけるくん)　僕、あるゲームを作ろうと思っているんです。<br>
     先生)　どういうゲームですか？<br>
     たけるくん)　合図が出たらにクリックして、どれだけズレが少ないかを競うゲームです。<br>
@@ -226,7 +226,7 @@ button:hover { background: #1558b0; }
   </div>
 
   <div class="story">
-    <div class="story-label">📖 場面</div>
+    <div class="story-label">場面</div>
     先生)　このスクリプトでは正しく動作しませんね。先生が修正してあげましょう。<br>
     たけるくん)　ありがとうございます。ちゃんと動くようになりました。<br>
     先生)　ですがこれだと味気ないですね。更にいろんな機能を追加してみましょう。<br>
@@ -272,7 +272,7 @@ button:hover { background: #1558b0; }
   </div>
 
   <div class="story">
-    <div class="story-label">📖 場面</div>
+    <div class="story-label">場面</div>
     先生)　このスクリプトの一番下に「☁counterを0にする」というブロックを追加しておいてください。これで正しく動作するはずです。<br>
     たけるくん)　やった！実際に遊んでみます。...あれ。<br>
     先生)　どうしましたか？<br>
@@ -399,7 +399,7 @@ button:hover { background: #1558b0; }
   <h3>問題を読み、答えなさい。</h3>
 
   <div class="story">
-    <div class="story-label">📖 説明</div>
+    <div class="story-label">説明</div>
     ゆめさんは、scratchで使用するデータ交換フォーマット、SSONを作っています。<br>
     次の画像は、そのSSONをデコードする関数です。<br>
     ①, ②を答えなさい。ただし、空白のものはnullと表す。
@@ -516,7 +516,7 @@ button:hover { background: #1558b0; }
   <h3>問題を読み、答えなさい。</h3>
 
   <div class="story">
-    <div class="story-label">📖 説明</div>
+    <div class="story-label">説明</div>
     まもるくんは256×256のRPGマップを、タイルマップ式で描画するプログラムを作ろうとしている。<br>
     タイルマップとは、小さな画像（タイル）をマス目状に並べて、1つの大きなマップを作る仕組みのことである。<br>
     まず、描画を簡単にするためにタイルの座標データをリストbx、byに生成するスクリプトを作った。
@@ -525,7 +525,7 @@ button:hover { background: #1558b0; }
   <img src="imgs/img25.png" alt="">
 
   <div class="story">
-    <div class="story-label">📖 説明</div>
+    <div class="story-label">説明</div>
     マップのデータは、<br>
     0→地面、1→壁としてデータ化してリストmap dataに保存されている。<br>
     まもるくんは次にマップデータのデコードして、タイルごとのデータをリストbcに格納する関数を作成した。
@@ -581,7 +581,7 @@ button:hover { background: #1558b0; }
   </div>
 
   <div class="story">
-    <div class="story-label">📖 説明</div>
+    <div class="story-label">説明</div>
     次に、まもるくんは画面を描画する関数を作成した。<br>
     関数画面描画は、毎フレーム実行する。<br>
     また、新しい変数camera_X, camera_Y, player_X, player_Yを作成した。<br>
@@ -621,7 +621,7 @@ button:hover { background: #1558b0; }
   </div>
 
   <div class="story">
-    <div class="story-label">📖 説明</div>
+    <div class="story-label">説明</div>
     最後にまもるくんは関数プレイヤーの操作を作った。この関数は関数画面描画の前に実行し、毎フレーム実行する。<br>
     イベントright, down, left, upはプレイヤーを3ティックかけて1マス移動させるイベントであり、イベント終了後にmovingが0になる。
   </div>
@@ -674,7 +674,7 @@ button:hover { background: #1558b0; }
   </h3>
 
   <div class="story">
-    <div class="story-label">📖 説明</div>
+    <div class="story-label">説明</div>
     花子さんは、天井と糸で繋がれたボールの動きをシミュレーションする作品を作ろうとしている。<br>
     ボールは重力の影響を受けて落下するが、糸が引っ張られると振り子運動に変わる。<br>
     花子さんはまず、画面を描画する関数を作成した。
@@ -683,12 +683,13 @@ button:hover { background: #1558b0; }
   <img src="imgs/img41.png" alt="">
 
   <div class="story">
-    <div class="story-label">📖 説明</div>
+    <div class="story-label">説明</div>
     次に、花子さんはボールの動きを計算する関数を作成した。<br>
     この関数は毎フレーム実行される。<br>
-    緑の旗が押されたとき、それぞれの変数はこのように定義される。<br>
-    x=0, y=130, vx=0, vy=0, g=-0.5, L=150, state=slack。<br>
+    緑の旗が押されたとき、それぞれの変数はこのように設定される。<br>
+    x=150, y=50, vx=0, vy=0, g=-0.5, L=150, state=slack。<br>
     x, yはボールの座標、vx, vyはボールの速度、gは重力加速度、Lは糸の長さ、stateは糸の状態を表す変数で、slackのとき自由落下運動をし、tautのとき振り子運動をする。<br>
+    また、振り子の支点は(0,130)に固定されている。
   </div>
 
   <div class="question">
@@ -722,7 +723,7 @@ button:hover { background: #1558b0; }
   </div>
 
   <div class="story">
-    <div class="story-label">📖 説明</div>
+    <div class="story-label">説明</div>
     (1) のスクリプトの後に、rがL以上ときの動作を追加する。<br>
     まず、支点からボールへ向かう方向を表す単位ベクトルのx,y成分を求める。これで (nx, ny) は長さ1の方向ベクトルになる。<br>
     次に、ボールの位置を円周上に戻す。支点から同じ方向に、ちょうど糸の長さLだけ進んだ位置にボールを強制的に移動させる。<br>
@@ -763,7 +764,7 @@ button:hover { background: #1558b0; }
   </div>
 
   <div class="story">
-    <div class="story-label">📖 説明</div>
+    <div class="story-label">説明</div>
     次に、stateがtautのときのボールの動きを計算するスクリプトを作成する。<br>
     まず、重力による加速度を速度に加える。<br>
     次に、支点からボールまでの距離を求める。<br>
