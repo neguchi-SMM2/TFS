@@ -662,18 +662,63 @@ button:hover { background: #1558b0; }
 
   <div class="nav">
     <button onclick="prevSection(4)">戻る</button>
-    <button onclick="nextSection(4)">提出</button>
+    <button onclick="nextSection(4)">次へ</button>
   </div>  
 </div>
 
 <div class="card section hidden" id="section5">
   <h2>大問4</h2>
-  <h3>自由記述問題</h3>
+  <h3>
+    花子さんが天井と糸で繋がれたボールの動きをシミュレーションする作品を作ろうとしている。<br>
+    問題を読み、答えなさい。
+  </h3>
+
+  <div class="story">
+    <div class="story-label">📖 説明</div>
+    花子さんは、天井と糸で繋がれたボールの動きをシミュレーションする作品を作ろうとしている。<br>
+    ボールは重力の影響を受けて落下するが、糸が引っ張られると振り子運動に変わる。<br>
+    花子さんはまず、画面を描画する関数を作成した。
+  </div>
+
+  <img src="imgs/img41.png" alt="">
+
+  <div class="story">
+    <div class="story-label">📖 説明</div>
+    次に、花子さんはボールの動きを計算する関数を作成した。<br>
+    この関数は毎フレーム実行される。<br>
+    緑の旗が押されたとき、それぞれの変数はこのように定義される。<br>
+    x=0, y=130, vx=0, vy=0, g=-0.5, L=150, state=slack。<br>
+    x, yはボールの座標、vx, vyはボールの速度、gは重力加速度、Lは糸の長さ、stateは糸の状態を表す変数で、slackのとき自由落下運動をし、tautのとき振り子運動をする。<br>
+  </div>
 
   <div class="question">
-    <p>(1) あなたがscratchで作った作品の中で一番自信作のものを紹介してください。作品のURLと、どのような工夫をしたかを簡単に説明してください。</p>
-    <textarea name="q15" style="width:100%; height:120px; padding:10px; border:1px solid #ccc; border-radius:4px;"></textarea>
-  </div>
+    <p>(1) stateがslackのときのボールの動きを計算するスクリプトの冒頭部分としてもっとも正しいものを1つ選びなさい。ここでは、ボールの座標を更新し、支点からボールまでの距離rを求める。ただし、正しいものがない場合は5を選びなさい。</p>
+    <div class="options">
+      <label class="option-card">
+        <input type="radio" name="q15" value="1">
+        <img src="imgs/img42.png" alt="">
+        <span>1</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q15" value="2">
+        <img src="imgs/img43.png" alt="">
+        <span>2</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q15" value="3">
+        <img src="imgs/img44.png" alt="">
+        <span>3</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q15" value="4">
+        <img src="imgs/img45.png" alt="">
+        <span>4</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q15" value="5">
+        <span>5</span>
+      </label>
+    </div>
 
   <p>大問4は以上です。</p>
 
@@ -730,6 +775,7 @@ function showResult() {
   if (document.querySelector('[name="q12"]:checked')?.value == "3") score++;
   if (document.querySelector('[name="q13"]:checked')?.value == "1") score++;
   if (document.querySelector('[name="q14"]:checked')?.value == "2") score++;
+  if (document.querySelector('[name="q15"]:checked')?.value == "5") score++;
 
   document.getElementById("section4").classList.add("hidden");
   document.getElementById("resultSection").classList.remove("hidden");
