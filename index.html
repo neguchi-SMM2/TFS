@@ -844,6 +844,8 @@ function prevSection(current) {
 }
 
 function showResult() {
+  const confirmed = confirm("提出しますか？\n提出後は回答を変更できません。");
+  if (!confirmed) return;
   let score = 0;
   let total = 100;
 
