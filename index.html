@@ -61,12 +61,70 @@ h2 {
   border-top: 4px solid #f9a825;
   border-radius: 6px;
   padding: 14px 16px;
+  position: relative;
 }
 
 .question > p:first-child {
   font-weight: bold;
   color: #555;
   margin-top: 0;
+}
+
+/* ===== 正誤バッジ ===== */
+.question-result-badge {
+  display: inline-block;
+  font-size: 0.85em;
+  font-weight: bold;
+  padding: 2px 10px;
+  border-radius: 10px;
+  margin-left: 10px;
+  vertical-align: middle;
+}
+.badge-correct {
+  background: #e6f4ea;
+  color: #188038;
+  border: 1px solid #34a853;
+}
+.badge-incorrect {
+  background: #fce8e6;
+  color: #c5221f;
+  border: 1px solid #ea4335;
+}
+
+/* 正解・不正解の問題枠色変化 */
+.question.result-correct {
+  border-top-color: #34a853;
+  border-color: #34a853;
+  background: #f0faf2;
+}
+.question.result-incorrect {
+  border-top-color: #ea4335;
+  border-color: #ea4335;
+  background: #fff5f5;
+}
+
+/* 正解の選択肢ハイライト（提出後） */
+.option-card.show-correct {
+  border-color: #34a853 !important;
+  border-width: 2px !important;
+  background: #e6f4ea !important;
+}
+/* 不正解で選んだ選択肢ハイライト（提出後） */
+.option-card.show-wrong-selected {
+  border-color: #ea4335 !important;
+  border-width: 2px !important;
+  background: #fce8e6 !important;
+}
+
+/* 正解テキスト（数値入力用） */
+.correct-answer-note {
+  margin-top: 10px;
+  padding: 6px 12px;
+  background: #e6f4ea;
+  border-radius: 4px;
+  color: #188038;
+  font-size: 0.88em;
+  font-weight: bold;
 }
 
 button {
@@ -77,7 +135,6 @@ button {
   background: #1a73e8;
   color: white;
 }
-
 button:hover { background: #1558b0; }
 
 .nav {
@@ -88,16 +145,12 @@ button:hover { background: #1558b0; }
 
 .hidden { display: none; }
 
-.correct { color: green; }
-.incorrect { color: red; }
-
 .progress {
   height: 6px;
   background: #ddd;
   border-radius: 3px;
   margin-bottom: 15px;
 }
-
 .progress-bar {
   height: 100%;
   background: #1a73e8;
@@ -117,47 +170,73 @@ button:hover { background: #1558b0; }
   border-radius: 8px;
   padding: 10px;
   cursor: pointer;
-  transition: 0.2s;
+  transition: border-color 0.2s, background 0.2s;
   text-align: center;
   background: white;
 }
-
 .option-card img {
   max-width: 100%;
   border-radius: 6px;
   margin-bottom: 8px;
 }
-
 .option-card input {
   display: none;
 }
-
 .option-card:hover {
   border-color: #1a73e8;
 }
 
+/* ===== 画像なし選択肢も青枠で囲む（修正） ===== */
+.option-card:has(input:checked) {
+  border-color: #1a73e8;
+  border-width: 2px;
+  background: #e8f0fe;
+}
+/* 画像あり選択肢は画像にアウトライン */
 .option-card input:checked + img {
   outline: 3px solid #1a73e8;
   border-radius: 6px;
 }
 
-.card > img {
+/* 提出後は操作不可 */
+.submitted .option-card {
+  cursor: default;
+  pointer-events: none;
+}
+.submitted input[type="number"] {
+  pointer-events: none;
+  background: #f5f5f5;
+}
+
+/* カード直下・問題・説明内の説明用画像 */
+.card > img,
+.question > img,
+.story img {
   max-width: 60%;
   display: block;
   margin: 8px auto;
 }
 
-.question > img {
-  max-width: 60%;
-  display: block;
-  margin: 8px auto;
+/* 結果画面 */
+.score-display {
+  font-size: 2.5em;
+  text-align: center;
+  padding: 20px;
+  color: #1a73e8;
+  font-weight: bold;
 }
-
+.review-btn {
+  display: block;
+  margin: 10px auto 0;
+  background: #34a853;
+  font-size: 1em;
+  padding: 10px 24px;
+}
+.review-btn:hover { background: #2d8f47 !important; }
 </style>
 </head>
 
 <body>
-
 <div class="container">
 <h1>Test For Scratchers</h1>
 
@@ -171,7 +250,6 @@ button:hover { background: #1558b0; }
   <p>このテストは、scratcherによるscratcherのscratchのためのテストです。</p>
   <p>大問は1から4まであり、100点満点です。</p>
   <p>次へ ボタンをクリックすると、大問1に入ります。</p>
-
   <div class="nav">
     <div></div>
     <button onclick="nextSection(1)">次へ</button>
@@ -181,7 +259,6 @@ button:hover { background: #1558b0; }
 <!-- セクション2: 大問1 -->
 <div class="card section hidden" id="section2">
   <h2>大問1</h2>
-
   <h3>たけるくんと先生がコンピューター室で話しています。<br>問題を読み、答えなさい。</h3>
 
   <div class="story">
@@ -195,33 +272,14 @@ button:hover { background: #1558b0; }
     「画面をクリック!」は表示されますが、画面をクリックしても結果が表示されません。スクリプトを見せてください。(あ)
   </div>
 
-  <div class="question">
+  <div class="question" id="q1_box">
     <p>(1) (あ)の時点でのスクリプトとしてもっとも正しいものを1つ選びなさい。ただし、正しいものがない場合は5を選べ。</p>
     <div class="options">
-      <label class="option-card">
-        <input type="radio" name="q1" value="1">
-        <img src="imgs/img1.png" alt="">
-        <span>1</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q1" value="2">
-        <img src="imgs/img2.png" alt="">
-        <span>2</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q1" value="3">
-        <img src="imgs/img3.png" alt="">
-        <span>3</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q1" value="4">
-        <img src="imgs/img4.png" alt="">
-        <span>4</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q1" value="5">
-        <span>5</span>
-      </label>
+      <label class="option-card"><input type="radio" name="q1" value="1"><img src="imgs/img1.png" alt=""><span>1</span></label>
+      <label class="option-card"><input type="radio" name="q1" value="2"><img src="imgs/img2.png" alt=""><span>2</span></label>
+      <label class="option-card"><input type="radio" name="q1" value="3"><img src="imgs/img3.png" alt=""><span>3</span></label>
+      <label class="option-card"><input type="radio" name="q1" value="4"><img src="imgs/img4.png" alt=""><span>4</span></label>
+      <label class="option-card"><input type="radio" name="q1" value="5"><span>5</span></label>
     </div>
   </div>
 
@@ -240,34 +298,15 @@ button:hover { background: #1558b0; }
     先生)　スクリプトを見せてください...これでは正しく動作しませんね。クラウド変数は文字が使用できないので、小数点のピリオドをなくさなければなりません。タイマーの値は少数第2位までなので、このようにしましょう。(い)
   </div>
 
-  <div class="question">
+  <div class="question" id="q2_box">
     <p>(2) このスクリプトは、(い)の時点でのスクリプトの一部である。これの下に続くスクリプトとしてもっとも正しいものを1つ選びなさい。ただし、正しいものがない場合は5を選べ。</p>
     <img src="imgs/img10.png" alt="">
     <div class="options">
-      <label class="option-card">
-        <input type="radio" name="q2" value="1">
-        <img src="imgs/img6.png" alt="">
-        <span>1</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q2" value="2">
-        <img src="imgs/img7.png" alt="">
-        <span>2</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q2" value="3">
-        <img src="imgs/img8.png" alt="">
-        <span>3</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q2" value="4">
-        <img src="imgs/img9.png" alt="">
-        <span>4</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q2" value="5">
-        <span>5</span>
-      </label>
+      <label class="option-card"><input type="radio" name="q2" value="1"><img src="imgs/img6.png" alt=""><span>1</span></label>
+      <label class="option-card"><input type="radio" name="q2" value="2"><img src="imgs/img7.png" alt=""><span>2</span></label>
+      <label class="option-card"><input type="radio" name="q2" value="3"><img src="imgs/img8.png" alt=""><span>3</span></label>
+      <label class="option-card"><input type="radio" name="q2" value="4"><img src="imgs/img9.png" alt=""><span>4</span></label>
+      <label class="option-card"><input type="radio" name="q2" value="5"><span>5</span></label>
     </div>
   </div>
 
@@ -287,106 +326,44 @@ button:hover { background: #1558b0; }
     たけるくん)　ちゃんと動作しますね。先生、協力してくれてありがとうございました！
   </div>
 
-  <div class="question">
+  <div class="question" id="q3_box">
     <p>(3) 2000年からの日数を2000年からのティック数に変換するにはどのように計算すればよいか。もっとも正しいものを1つ選べ。ただし、正しいものがない場合は「正しいものはない。」を選べ。</p>
     <div class="options">
-      <label class="option-card">
-        <input type="radio" name="q3" value="1">
-        <span>2000年からの日数 × 24(時間) × 60(分) × 60(秒) × 30</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q3" value="2">
-        <span>2000年からの日数 × 24(時間) × 60(分) × 60(秒) × 60</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q3" value="3">
-        <span>2000年からの日数 × 24(時間) × 60(分) × 60(秒) ÷ 30</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q3" value="4">
-        <span>2000年からの日数 × 24(時間) × 60(分) × 60(秒) ÷ 60</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q3" value="5">
-        <span>2000年からの日数 ÷ 24(時間) × 60(分) × 60(秒) × 30</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q3" value="6">
-        <span>2000年からの日数 ÷ 24(時間) × 60(分) × 60(秒) × 60</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q3" value="7">
-        <span>2000年からの日数 ÷ 24(時間) × 60(分) × 60(秒) ÷ 30</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q3" value="8">
-        <span>2000年からの日数 ÷ 24(時間) × 60(分) × 60(秒) ÷ 60</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q3" value="9">
-        <span>正しいものはない。</span>
-      </label>
+      <label class="option-card"><input type="radio" name="q3" value="1"><span>2000年からの日数 × 24(時間) × 60(分) × 60(秒) × 30</span></label>
+      <label class="option-card"><input type="radio" name="q3" value="2"><span>2000年からの日数 × 24(時間) × 60(分) × 60(秒) × 60</span></label>
+      <label class="option-card"><input type="radio" name="q3" value="3"><span>2000年からの日数 × 24(時間) × 60(分) × 60(秒) ÷ 30</span></label>
+      <label class="option-card"><input type="radio" name="q3" value="4"><span>2000年からの日数 × 24(時間) × 60(分) × 60(秒) ÷ 60</span></label>
+      <label class="option-card"><input type="radio" name="q3" value="5"><span>2000年からの日数 ÷ 24(時間) × 60(分) × 60(秒) × 30</span></label>
+      <label class="option-card"><input type="radio" name="q3" value="6"><span>2000年からの日数 ÷ 24(時間) × 60(分) × 60(秒) × 60</span></label>
+      <label class="option-card"><input type="radio" name="q3" value="7"><span>2000年からの日数 ÷ 24(時間) × 60(分) × 60(秒) ÷ 30</span></label>
+      <label class="option-card"><input type="radio" name="q3" value="8"><span>2000年からの日数 ÷ 24(時間) × 60(分) × 60(秒) ÷ 60</span></label>
+      <label class="option-card"><input type="radio" name="q3" value="9"><span>正しいものはない。</span></label>
     </div>
   </div>
 
-  <div class="question">
+  <div class="question" id="q4_box">
     <p>(4) 最終的なスクリプトとしてもっとも正しいものを1つ選びなさい。なお、スクリプトは一部...で省略している。</p>
     <div class="options">
-      <label class="option-card">
-        <input type="radio" name="q4" value="1">
-        <img src="imgs/img11.png" alt="">
-        <span>1</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q4" value="2">
-        <img src="imgs/img12.png" alt="">
-        <span>2</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q4" value="3">
-        <img src="imgs/img13.png" alt="">
-        <span>3</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q4" value="4">
-        <img src="imgs/img14.png" alt="">
-        <span>4</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q4" value="5">
-        <span>5</span>
-      </label>
+      <label class="option-card"><input type="radio" name="q4" value="1"><img src="imgs/img11.png" alt=""><span>1</span></label>
+      <label class="option-card"><input type="radio" name="q4" value="2"><img src="imgs/img12.png" alt=""><span>2</span></label>
+      <label class="option-card"><input type="radio" name="q4" value="3"><img src="imgs/img13.png" alt=""><span>3</span></label>
+      <label class="option-card"><input type="radio" name="q4" value="4"><img src="imgs/img14.png" alt=""><span>4</span></label>
+      <label class="option-card"><input type="radio" name="q4" value="5"><span>5</span></label>
     </div>
   </div>
 
-  <div class="question">
+  <div class="question" id="q5_box">
     <p>(5) 勝ち負けの精度を更に良くするためにはどうすればよいか。最も正しいものを選びなさい。ただし、正しいものがない場合は「正しいものはない。」を選びなさい。</p>
     <div class="options">
-      <label class="option-card">
-        <input type="radio" name="q5" value="1">
-        <span>2000年からのティック数に100を足す</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q5" value="2">
-        <span>2000年からのティック数を100で割る</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q5" value="3">
-        <span>2000年からのティック数から100引く</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q5" value="4">
-        <span>2000年からのティック数を100倍する</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q5" value="5">
-        <span>正しいものはない。</span>
-      </label>
+      <label class="option-card"><input type="radio" name="q5" value="1"><span>2000年からのティック数に100を足す</span></label>
+      <label class="option-card"><input type="radio" name="q5" value="2"><span>2000年からのティック数を100で割る</span></label>
+      <label class="option-card"><input type="radio" name="q5" value="3"><span>2000年からのティック数から100引く</span></label>
+      <label class="option-card"><input type="radio" name="q5" value="4"><span>2000年からのティック数を100倍する</span></label>
+      <label class="option-card"><input type="radio" name="q5" value="5"><span>正しいものはない。</span></label>
     </div>
   </div>
 
   <p>大問1は以上です。</p>
-
   <div class="nav">
     <button onclick="prevSection(2)">戻る</button>
     <button onclick="nextSection(2)">次へ</button>
@@ -407,103 +384,49 @@ button:hover { background: #1558b0; }
 
   <img src="imgs/img15.png" alt="">
 
-  <div class="question">
+  <div class="question" id="q6_box">
     <p>① UN/player1/scene/home/ask/<br>
       このSSONテキストをデコードしたときのresultを1番から順に読んだときのものとしてもっとも正しいものを1つ選びなさい。<br>
       ただし、正しいものがない場合は、「正しいものはない。」を選択しなさい。
     </p>
     <div class="options">
-      <label class="option-card">
-        <input type="radio" name="q6" value="1">
-        <span>UN, player1, scene, home, ask</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q6" value="2">
-        <span>UN, scene, ask, player1, home</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q6" value="3">
-        <span>UN, player1, scene, home, ask, null</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q6" value="4">
-        <span>UN, scene, ask, player1, home, null</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q6" value="5">
-        <span>正しいものはない。</span>
-      </label>
+      <label class="option-card"><input type="radio" name="q6" value="1"><span>UN, player1, scene, home, ask</span></label>
+      <label class="option-card"><input type="radio" name="q6" value="2"><span>UN, scene, ask, player1, home</span></label>
+      <label class="option-card"><input type="radio" name="q6" value="3"><span>UN, player1, scene, home, ask, null</span></label>
+      <label class="option-card"><input type="radio" name="q6" value="4"><span>UN, scene, ask, player1, home, null</span></label>
+      <label class="option-card"><input type="radio" name="q6" value="5"><span>正しいものはない。</span></label>
     </div>
   </div>
 
-  <div class="question">
+  <div class="question" id="q7_box">
     <p>② エンコード関数としてもっとも正しいものを1つ選びなさい。ただし、正しいものがない場合は5を選びなさい。</p>
     <div class="options">
-      <label class="option-card">
-        <input type="radio" name="q7" value="1">
-        <img src="imgs/img16.png" alt="">
-        <span>1</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q7" value="2">
-        <img src="imgs/img17.png" alt="">
-        <span>2</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q7" value="3">
-        <img src="imgs/img18.png" alt="">
-        <span>3</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q7" value="4">
-        <img src="imgs/img19.png" alt="">
-        <span>4</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q7" value="5">
-        <span>5</span>
-      </label>
+      <label class="option-card"><input type="radio" name="q7" value="1"><img src="imgs/img16.png" alt=""><span>1</span></label>
+      <label class="option-card"><input type="radio" name="q7" value="2"><img src="imgs/img17.png" alt=""><span>2</span></label>
+      <label class="option-card"><input type="radio" name="q7" value="3"><img src="imgs/img18.png" alt=""><span>3</span></label>
+      <label class="option-card"><input type="radio" name="q7" value="4"><img src="imgs/img19.png" alt=""><span>4</span></label>
+      <label class="option-card"><input type="radio" name="q7" value="5"><span>5</span></label>
     </div>
   </div>
 
-  <div class="question">
+  <div class="question" id="q8_box">
     <p>(2) 旗を押したときのcounterの値を入力しなさい。</p>
     <img src="imgs/img20.png" alt="">
     <input type="number" name="q8" style="padding:6px; border:1px solid #ccc; border-radius:4px; width:120px;">
   </div>
 
-  <div class="question">
+  <div class="question" id="q9_box">
     <p>(3) 1+2+3+4+5+6+7+8+9+10を計算するものとしてもっとも正しいものを1つ選びなさい。ただし、正しいものがない場合は5を選びなさい。</p>
     <div class="options">
-      <label class="option-card">
-        <input type="radio" name="q9" value="1">
-        <img src="imgs/img21.png" alt="">
-        <span>1</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q9" value="2">
-        <img src="imgs/img22.png" alt="">
-        <span>2</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q9" value="3">
-        <img src="imgs/img23.png" alt="">
-        <span>3</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q9" value="4">
-        <img src="imgs/img24.png" alt="">
-        <span>4</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q9" value="5">
-        <span>5</span>
-      </label>
+      <label class="option-card"><input type="radio" name="q9" value="1"><img src="imgs/img21.png" alt=""><span>1</span></label>
+      <label class="option-card"><input type="radio" name="q9" value="2"><img src="imgs/img22.png" alt=""><span>2</span></label>
+      <label class="option-card"><input type="radio" name="q9" value="3"><img src="imgs/img23.png" alt=""><span>3</span></label>
+      <label class="option-card"><input type="radio" name="q9" value="4"><img src="imgs/img24.png" alt=""><span>4</span></label>
+      <label class="option-card"><input type="radio" name="q9" value="5"><span>5</span></label>
     </div>
   </div>
 
   <p>大問2は以上です。</p>
-
   <div class="nav">
     <button onclick="prevSection(3)">戻る</button>
     <button onclick="nextSection(3)">次へ</button>
@@ -533,7 +456,7 @@ button:hover { background: #1558b0; }
 
   <img src="imgs/img26.png" alt="">
 
-  <div class="question">
+  <div class="question" id="q10_box">
     <p>(1) ある1つのタイルの属性を「地面(0)」から「壁(1)」に変更したい。しかし、配列全体を毎回作り直すと65,536(256×256)回の処理が必要になってしまう。<br>
       そこで、あらかじめ mapdata を幅 w マスごとに分割（スライス）して保存しておくことにする。<br>
       タイルが変更されたときは：<br>
@@ -545,38 +468,19 @@ button:hover { background: #1558b0; }
     <input type="number" name="q10" style="padding:6px; border:1px solid #ccc; border-radius:4px; width:120px;">
   </div>
 
-  <div class="question">
+  <div class="question" id="q11_box">
     <p>(2) (1)の方法を用いることで、配列全体を作り直す方法の何倍高速化することができたか。</p>
     <input type="number" name="q11" style="padding:6px; border:1px solid #ccc; border-radius:4px; width:120px;">
   </div>
 
-  <div class="question">
+  <div class="question" id="q12_box">
     <p>(3) スライス機能を追加した関数「マップデータのデコード」としてもっとも正しいものを1つ選びなさい。ただし、正しいものがない場合は5を選びなさい。</p>
     <div class="options">
-      <label class="option-card">
-        <input type="radio" name="q12" value="1">
-        <img src="imgs/img27.png" alt="">
-        <span>1</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q12" value="2">
-        <img src="imgs/img28.png" alt="">
-        <span>2</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q12" value="3">
-        <img src="imgs/img29.png" alt="">
-        <span>3</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q12" value="4">
-        <img src="imgs/img30.png" alt="">
-        <span>4</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q12" value="5">
-        <span>5</span>
-      </label>
+      <label class="option-card"><input type="radio" name="q12" value="1"><img src="imgs/img27.png" alt=""><span>1</span></label>
+      <label class="option-card"><input type="radio" name="q12" value="2"><img src="imgs/img28.png" alt=""><span>2</span></label>
+      <label class="option-card"><input type="radio" name="q12" value="3"><img src="imgs/img29.png" alt=""><span>3</span></label>
+      <label class="option-card"><input type="radio" name="q12" value="4"><img src="imgs/img30.png" alt=""><span>4</span></label>
+      <label class="option-card"><input type="radio" name="q12" value="5"><span>5</span></label>
     </div>
   </div>
 
@@ -590,33 +494,14 @@ button:hover { background: #1558b0; }
 
   <img src="imgs/img31.png" alt="">
 
-  <div class="question">
+  <div class="question" id="q13_box">
     <p>(4) 関数スタート番号のスクリプトとしてもっとも正しいものを1つ選びなさい。ただし、正しいものがない場合は5を選びなさい。</p>
     <div class="options">
-      <label class="option-card">
-        <input type="radio" name="q13" value="1">
-        <img src="imgs/img32.png" alt="">
-        <span>1</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q13" value="2">
-        <img src="imgs/img33.png" alt="">
-        <span>2</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q13" value="3">
-        <img src="imgs/img34.png" alt="">
-        <span>3</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q13" value="4">
-        <img src="imgs/img35.png" alt="">
-        <span>4</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q13" value="5">
-        <span>5</span>
-      </label>
+      <label class="option-card"><input type="radio" name="q13" value="1"><img src="imgs/img32.png" alt=""><span>1</span></label>
+      <label class="option-card"><input type="radio" name="q13" value="2"><img src="imgs/img33.png" alt=""><span>2</span></label>
+      <label class="option-card"><input type="radio" name="q13" value="3"><img src="imgs/img34.png" alt=""><span>3</span></label>
+      <label class="option-card"><input type="radio" name="q13" value="4"><img src="imgs/img35.png" alt=""><span>4</span></label>
+      <label class="option-card"><input type="radio" name="q13" value="5"><span>5</span></label>
     </div>
   </div>
 
@@ -628,44 +513,25 @@ button:hover { background: #1558b0; }
 
   <img src="imgs/img36.png" alt="">
 
-  <div class="question">
+  <div class="question" id="q14_box">
     <p>(5) 関数当たり判定としてもっとも正しいものを1つ選びなさい。ただし、正しいものがない場合は5を選びなさい。</p>
     <div class="options">
-      <label class="option-card">
-        <input type="radio" name="q14" value="1">
-        <img src="imgs/img37.png" alt="">
-        <span>1</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q14" value="2">
-        <img src="imgs/img38.png" alt="">
-        <span>2</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q14" value="3">
-        <img src="imgs/img39.png" alt="">
-        <span>3</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q14" value="4">
-        <img src="imgs/img40.png" alt="">
-        <span>4</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q14" value="5">
-        <span>5</span>
-      </label>
+      <label class="option-card"><input type="radio" name="q14" value="1"><img src="imgs/img37.png" alt=""><span>1</span></label>
+      <label class="option-card"><input type="radio" name="q14" value="2"><img src="imgs/img38.png" alt=""><span>2</span></label>
+      <label class="option-card"><input type="radio" name="q14" value="3"><img src="imgs/img39.png" alt=""><span>3</span></label>
+      <label class="option-card"><input type="radio" name="q14" value="4"><img src="imgs/img40.png" alt=""><span>4</span></label>
+      <label class="option-card"><input type="radio" name="q14" value="5"><span>5</span></label>
     </div>
   </div>
 
   <p>大問3は以上です。</p>
-
   <div class="nav">
     <button onclick="prevSection(4)">戻る</button>
     <button onclick="nextSection(4)">次へ</button>
-  </div>  
+  </div>
 </div>
 
+<!-- セクション5: 大問4 -->
 <div class="card section hidden" id="section5">
   <h2>大問4</h2>
   <h3>
@@ -692,33 +558,14 @@ button:hover { background: #1558b0; }
     また、振り子の支点は(0,130)に固定されている。
   </div>
 
-  <div class="question">
+  <div class="question" id="q15_box">
     <p>(1) stateがslackのときのボールの動きを計算するスクリプトの冒頭部分としてもっとも正しいものを1つ選びなさい。ここでは、ボールの座標を更新し、支点からボールまでの距離rを求める。ただし、正しいものがない場合は5を選びなさい。</p>
     <div class="options">
-      <label class="option-card">
-        <input type="radio" name="q15" value="1">
-        <img src="imgs/img42.png" alt="">
-        <span>1</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q15" value="2">
-        <img src="imgs/img43.png" alt="">
-        <span>2</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q15" value="3">
-        <img src="imgs/img44.png" alt="">
-        <span>3</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q15" value="4">
-        <img src="imgs/img45.png" alt="">
-        <span>4</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q15" value="5">
-        <span>5</span>
-      </label>
+      <label class="option-card"><input type="radio" name="q15" value="1"><img src="imgs/img42.png" alt=""><span>1</span></label>
+      <label class="option-card"><input type="radio" name="q15" value="2"><img src="imgs/img43.png" alt=""><span>2</span></label>
+      <label class="option-card"><input type="radio" name="q15" value="3"><img src="imgs/img44.png" alt=""><span>3</span></label>
+      <label class="option-card"><input type="radio" name="q15" value="4"><img src="imgs/img45.png" alt=""><span>4</span></label>
+      <label class="option-card"><input type="radio" name="q15" value="5"><span>5</span></label>
     </div>
   </div>
 
@@ -733,33 +580,14 @@ button:hover { background: #1558b0; }
     これで、stateがslackのときのボールの挙動の計算ができる。
   </div>
 
-  <div class="question">
+  <div class="question" id="q16_box">
     <p>(2) (1)のスクリプトの後に追加するスクリプトとしてもっとも正しいものを1つ選びなさい。ただし、正しいものがない場合は5を選びなさい。</p>
     <div class="options">
-      <label class="option-card">
-        <input type="radio" name="q16" value="1">
-        <img src="imgs/img46.png" alt="">
-        <span>1</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q16" value="2">
-        <img src="imgs/img47.png" alt="">
-        <span>2</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q16" value="3">
-        <img src="imgs/img48.png" alt="">
-        <span>3</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q16" value="4">
-        <img src="imgs/img49.png" alt="">
-        <span>4</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q16" value="5">
-        <span>5</span>
-      </label>
+      <label class="option-card"><input type="radio" name="q16" value="1"><img src="imgs/img46.png" alt=""><span>1</span></label>
+      <label class="option-card"><input type="radio" name="q16" value="2"><img src="imgs/img47.png" alt=""><span>2</span></label>
+      <label class="option-card"><input type="radio" name="q16" value="3"><img src="imgs/img48.png" alt=""><span>3</span></label>
+      <label class="option-card"><input type="radio" name="q16" value="4"><img src="imgs/img49.png" alt=""><span>4</span></label>
+      <label class="option-card"><input type="radio" name="q16" value="5"><span>5</span></label>
     </div>
   </div>
 
@@ -773,42 +601,22 @@ button:hover { background: #1558b0; }
     その後、新しい速度を用いてボールの位置を更新する。<br>
     続いて、糸の張力の計算をし、もし張力が0より小さいならstateをslackにする。<br>
     速度の大きさの2乗を計算し、それをLで割ることで円運動に必要な向心加速度 v²/Lを求める。<br>
-    これから、糸が支えなければならない力は向心力 − 重力の半径方向成分なので、最終的なスクリプトはこうなる。<br>
+    これから、糸が支えなければならない力を求め、最終的なスクリプトはこうなる。<br>
     実際に緑の旗を押してみると正しく動作する事がわかる。
   </div>
 
-  <div class="question">
+  <div class="question" id="q17_box">
     <p>(3) stateがtautのときのスクリプトとしてもっとも正しいものを1つ選びなさい。stateがslackのときに使用したブロックが使われている部分は省略されている。ただし、正しいものがない場合は5を選びなさい。</p>
     <div class="options">
-      <label class="option-card">
-        <input type="radio" name="q17" value="1">
-        <img src="imgs/img50.png" alt="">
-        <span>1</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q17" value="2">
-        <img src="imgs/img51.png" alt="">
-        <span>2</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q17" value="3">
-        <img src="imgs/img52.png" alt="">
-        <span>3</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q17" value="4">
-        <img src="imgs/img53.png" alt="">
-        <span>4</span>
-      </label>
-      <label class="option-card">
-        <input type="radio" name="q17" value="5">
-        <span>5</span>
-      </label>
+      <label class="option-card"><input type="radio" name="q17" value="1"><img src="imgs/img50.png" alt=""><span>1</span></label>
+      <label class="option-card"><input type="radio" name="q17" value="2"><img src="imgs/img51.png" alt=""><span>2</span></label>
+      <label class="option-card"><input type="radio" name="q17" value="3"><img src="imgs/img52.png" alt=""><span>3</span></label>
+      <label class="option-card"><input type="radio" name="q17" value="4"><img src="imgs/img53.png" alt=""><span>4</span></label>
+      <label class="option-card"><input type="radio" name="q17" value="5"><span>5</span></label>
     </div>
   </div>
 
   <p>大問4は以上です。</p>
-
   <div class="nav">
     <button onclick="prevSection(5)">戻る</button>
     <button onclick="showResult()">提出</button>
@@ -818,13 +626,43 @@ button:hover { background: #1558b0; }
 <!-- 結果 -->
 <div class="card hidden" id="resultSection">
   <h2>結果</h2>
-  <div id="resultText"></div>
+  <div class="score-display" id="scoreDisplay"></div>
+  <button class="review-btn" onclick="reviewAnswers()">回答を確認する</button>
 </div>
 
 </div>
 
 <script>
 const totalSections = 5;
+
+// ===== 正解データ =====
+const correctAnswers = {
+  q1:  { type: 'radio',  value: '4'   },
+  q2:  { type: 'radio',  value: '3'   },
+  q3:  { type: 'radio',  value: '1'   },
+  q4:  { type: 'radio',  value: '1'   },
+  q5:  { type: 'radio',  value: '3'   },
+  q6:  { type: 'radio',  value: '3'   },
+  q7:  { type: 'radio',  value: '4'   },
+  q8:  { type: 'number', value: '16'  },
+  q9:  { type: 'radio',  value: '1'   },
+  q10: { type: 'number', value: '256' },
+  q11: { type: 'number', value: '128' },
+  q12: { type: 'radio',  value: '3'   },
+  q13: { type: 'radio',  value: '1'   },
+  q14: { type: 'radio',  value: '2'   },
+  q15: { type: 'radio',  value: '5'   },
+  q16: { type: 'radio',  value: '3'   },
+  q17: { type: 'radio',  value: '1'   },
+};
+
+// ===== 配点データ =====
+const points = {
+  q1: 5, q2: 5, q3: 5, q4: 5, q5: 5,
+  q6: 5, q7: 5, q8: 5, q9: 5,
+  q10: 6, q11: 5, q12: 6, q13: 6, q14: 6,
+  q15: 8, q16: 9, q17: 9,
+};
 
 function updateProgress(section) {
   const percent = (section - 1) / (totalSections - 1) * 100;
@@ -845,35 +683,85 @@ function prevSection(current) {
   window.scrollTo(0, 0);
 }
 
+function getUserAnswer(name, type) {
+  if (type === 'radio') {
+    return document.querySelector(`[name="${name}"]:checked`)?.value ?? null;
+  } else {
+    return document.querySelector(`[name="${name}"]`)?.value || null;
+  }
+}
+
 function showResult() {
   const confirmed = confirm("提出しますか？\n提出後は回答を変更できません。");
   if (!confirmed) return;
+
   let score = 0;
-  let total = 100;
 
-  if (document.querySelector('[name="q1"]:checked')?.value == "4") score += 5;
-  if (document.querySelector('[name="q2"]:checked')?.value == "3") score += 5;
-  if (document.querySelector('[name="q3"]:checked')?.value == "1") score += 5;
-  if (document.querySelector('[name="q4"]:checked')?.value == "1") score += 5;
-  if (document.querySelector('[name="q5"]:checked')?.value == "3") score += 5;
-  if (document.querySelector('[name="q6"]:checked')?.value == "3") score += 5;
-  if (document.querySelector('[name="q7"]:checked')?.value == "4") score += 5;
-  if (document.querySelector('[name="q8"]')?.value == "16") score += 5;
-  if (document.querySelector('[name="q9"]:checked')?.value == "1") score += 5;
-  if (document.querySelector('[name="q10"]').value == "256") score += 6;
-  if (document.querySelector('[name="q11"]').value == "128") score += 5;
-  if (document.querySelector('[name="q12"]:checked')?.value == "3") score += 6;
-  if (document.querySelector('[name="q13"]:checked')?.value == "1") score += 6;
-  if (document.querySelector('[name="q14"]:checked')?.value == "2") score += 6;
-  if (document.querySelector('[name="q15"]:checked')?.value == "5") score += 8;
-  if (document.querySelector('[name="q16"]:checked')?.value == "3") score += 9;
-  if (document.querySelector('[name="q17"]:checked')?.value == "1") score += 9;
+  // --- 採点 ---
+  for (const [name, info] of Object.entries(correctAnswers)) {
+    const userVal = getUserAnswer(name, info.type);
+    if (userVal == info.value) {
+      score += points[name];
+    }
+  }
 
+  // --- 全inputを無効化・操作不可に ---
+  document.querySelectorAll('.section input').forEach(el => el.disabled = true);
+  document.querySelectorAll('.section').forEach(el => el.classList.add('submitted'));
+
+  // --- 各問題に正誤バッジ＆ハイライトを付ける ---
+  for (const [name, info] of Object.entries(correctAnswers)) {
+    const box = document.getElementById(name + '_box');
+    if (!box) continue;
+
+    const userVal = getUserAnswer(name, info.type);
+    const isCorrect = (userVal == info.value);
+
+    // 問題枠の色を変える
+    box.classList.add(isCorrect ? 'result-correct' : 'result-incorrect');
+
+    // 問題文にバッジを追加
+    const firstP = box.querySelector('p');
+    if (firstP) {
+      const badge = document.createElement('span');
+      badge.classList.add('question-result-badge', isCorrect ? 'badge-correct' : 'badge-incorrect');
+      badge.textContent = isCorrect ? '✓ 正解' : '✗ 不正解';
+      firstP.appendChild(badge);
+    }
+
+    if (!isCorrect) {
+      if (info.type === 'radio') {
+        // 正解の選択肢を緑でハイライト
+        const correctLabel = box.querySelector(`input[value="${info.value}"]`)?.closest('.option-card');
+        if (correctLabel) correctLabel.classList.add('show-correct');
+        // 自分が選んだ選択肢を赤でハイライト
+        if (userVal) {
+          const wrongLabel = box.querySelector(`input[value="${userVal}"]`)?.closest('.option-card');
+          if (wrongLabel) wrongLabel.classList.add('show-wrong-selected');
+        }
+      } else {
+        // 数値入力の場合は正解を文字で表示
+        const note = document.createElement('div');
+        note.classList.add('correct-answer-note');
+        note.textContent = `正解: ${info.value}`;
+        box.appendChild(note);
+      }
+    }
+  }
+
+  // --- 結果画面へ ---
   document.getElementById("section5").classList.add("hidden");
   document.getElementById("resultSection").classList.remove("hidden");
+  document.getElementById("scoreDisplay").textContent = score + " / 100 点";
+  window.scrollTo(0, 0);
+}
 
-  document.getElementById("resultText").innerHTML =
-    "<p>あなたの点数：<strong>" + score + " / " + total + "</strong></p>";
+// 結果画面から大問1へ戻って確認
+function reviewAnswers() {
+  document.getElementById("resultSection").classList.add("hidden");
+  document.getElementById("section2").classList.remove("hidden");
+  updateProgress(2);
+  window.scrollTo(0, 0);
 }
 </script>
 
