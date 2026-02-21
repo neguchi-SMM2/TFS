@@ -620,6 +620,44 @@ button:hover { background: #1558b0; }
     </div>
   </div>
 
+  <div class="story">
+    <div class="story-label">📖 説明</div>
+    最後にまもるくんは関数プレイヤーの操作を作った。この関数は関数画面描画の前に実行し、毎フレーム実行する。<br>
+    イベントright, down, left, upはプレイヤーを3ティックかけて1マス移動させるイベントであり、イベント終了後にmovingが0になる。
+  </div>
+
+  <img src="imgs/img36.png" alt="">
+
+  <div class="question">
+    <p>(5) 関数当たり判定としてもっとも正しいものを1つ選びなさい。ただし、正しいものがない場合は5を選びなさい。</p>
+    <div class="options">
+      <label class="option-card">
+        <input type="radio" name="q14" value="1">
+        <img src="imgs/img37.png" alt="">
+        <span>1</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q14" value="2">
+        <img src="imgs/img38.png" alt="">
+        <span>2</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q14" value="3">
+        <img src="imgs/img39.png" alt="">
+        <span>3</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q14" value="4">
+        <img src="imgs/img40.png" alt="">
+        <span>4</span>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="q14" value="5">
+        <span>5</span>
+      </label>
+    </div>
+  </div>
+
   <div class="nav">
     <button onclick="prevSection(4)">戻る</button>
     <button onclick="showResult()">提出</button>
@@ -671,8 +709,9 @@ function showResult() {
   if (document.querySelector('[name="q9"]:checked')?.value == "1") score++;
   if (document.querySelector('[name="q10"]').value == "256") score++;
   if (document.querySelector('[name="q11"]').value == "128") score++;
-  if (document.querySelector('[name="q12"]:checked')?.value == "2") score++;
-  if (document.querySelector('[name="q13"]:checked')?.value == "2") score++;
+  if (document.querySelector('[name="q12"]:checked')?.value == "3") score++;
+  if (document.querySelector('[name="q13"]:checked')?.value == "1") score++;
+  if (document.querySelector('[name="q14"]:checked')?.value == "2") score++;
 
   document.getElementById("section4").classList.add("hidden");
   document.getElementById("resultSection").classList.remove("hidden");
