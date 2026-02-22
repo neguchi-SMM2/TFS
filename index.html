@@ -33,7 +33,6 @@ h2 {
   padding-bottom: 5px;
 }
 
-/* ===== 説明文（会話文）のスタイル ===== */
 .story {
   background: #f8f9fa;
   border-left: 4px solid #1a73e8;
@@ -53,7 +52,6 @@ h2 {
   margin-bottom: 6px;
 }
 
-/* ===== 問題のスタイル ===== */
 .question {
   margin: 20px 0;
   background: #fff8e1;
@@ -70,7 +68,6 @@ h2 {
   margin-top: 0;
 }
 
-/* ===== 正誤バッジ ===== */
 .question-result-badge {
   display: inline-block;
   font-size: 0.85em;
@@ -91,7 +88,6 @@ h2 {
   border: 1px solid #ea4335;
 }
 
-/* 正解・不正解の問題枠色変化 */
 .question.result-correct {
   border-top-color: #34a853;
   border-color: #34a853;
@@ -103,20 +99,17 @@ h2 {
   background: #fff5f5;
 }
 
-/* 正解の選択肢ハイライト（提出後） */
 .option-card.show-correct {
   border-color: #34a853 !important;
   border-width: 2px !important;
   background: #e6f4ea !important;
 }
-/* 不正解で選んだ選択肢ハイライト（提出後） */
 .option-card.show-wrong-selected {
   border-color: #ea4335 !important;
   border-width: 2px !important;
   background: #fce8e6 !important;
 }
 
-/* 正解テキスト（数値入力用） */
 .correct-answer-note {
   margin-top: 10px;
   padding: 6px 12px;
@@ -186,19 +179,16 @@ button:hover { background: #1558b0; }
   border-color: #1a73e8;
 }
 
-/* ===== 画像なし選択肢も青枠で囲む（修正） ===== */
 .option-card:has(input:checked) {
   border-color: #1a73e8;
   border-width: 2px;
   background: #e8f0fe;
 }
-/* 画像あり選択肢は画像にアウトライン */
 .option-card input:checked + img {
   outline: 3px solid #1a73e8;
   border-radius: 6px;
 }
 
-/* 提出後は操作不可 */
 .submitted .option-card {
   cursor: default;
   pointer-events: none;
@@ -208,7 +198,6 @@ button:hover { background: #1558b0; }
   background: #f5f5f5;
 }
 
-/* カード直下・問題・説明内の説明用画像 */
 .card > img,
 .question > img,
 .story img {
@@ -217,7 +206,6 @@ button:hover { background: #1558b0; }
   margin: 8px auto;
 }
 
-/* 結果画面 */
 .score-display {
   font-size: 2.5em;
   text-align: center;
@@ -623,7 +611,6 @@ button:hover { background: #1558b0; }
   </div>
 </div>
 
-<!-- 結果 -->
 <div class="card hidden" id="resultSection">
   <h2>結果</h2>
   <div class="score-display" id="scoreDisplay"></div>
@@ -635,7 +622,6 @@ button:hover { background: #1558b0; }
 <script>
 const totalSections = 5;
 
-// ===== 正解データ =====
 const correctAnswers = {
   q1:  { type: 'radio',  value: '4'   },
   q2:  { type: 'radio',  value: '3'   },
@@ -656,7 +642,6 @@ const correctAnswers = {
   q17: { type: 'radio',  value: '1'   },
 };
 
-// ===== 配点データ =====
 const points = {
   q1: 5, q2: 5, q3: 5, q4: 5, q5: 5,
   q6: 5, q7: 5, q8: 5, q9: 5,
@@ -705,11 +690,9 @@ function showResult() {
     }
   }
 
-  // --- 全inputを無効化・操作不可に ---
   document.querySelectorAll('.section input').forEach(el => el.disabled = true);
   document.querySelectorAll('.section').forEach(el => el.classList.add('submitted'));
 
-  // --- 各問題に正誤バッジ＆ハイライトを付ける ---
   for (const [name, info] of Object.entries(correctAnswers)) {
     const box = document.getElementById(name + '_box');
     if (!box) continue;
@@ -717,10 +700,8 @@ function showResult() {
     const userVal = getUserAnswer(name, info.type);
     const isCorrect = (userVal == info.value);
 
-    // 問題枠の色を変える
     box.classList.add(isCorrect ? 'result-correct' : 'result-incorrect');
 
-    // 問題文にバッジを追加
     const firstP = box.querySelector('p');
     if (firstP) {
       const badge = document.createElement('span');
@@ -731,16 +712,13 @@ function showResult() {
 
     if (!isCorrect) {
       if (info.type === 'radio') {
-        // 正解の選択肢を緑でハイライト
         const correctLabel = box.querySelector(`input[value="${info.value}"]`)?.closest('.option-card');
         if (correctLabel) correctLabel.classList.add('show-correct');
-        // 自分が選んだ選択肢を赤でハイライト
         if (userVal) {
           const wrongLabel = box.querySelector(`input[value="${userVal}"]`)?.closest('.option-card');
           if (wrongLabel) wrongLabel.classList.add('show-wrong-selected');
         }
       } else {
-        // 数値入力の場合は正解を文字で表示
         const note = document.createElement('div');
         note.classList.add('correct-answer-note');
         note.textContent = `正解: ${info.value}`;
@@ -749,14 +727,12 @@ function showResult() {
     }
   }
 
-  // --- 結果画面へ ---
   document.getElementById("section5").classList.add("hidden");
   document.getElementById("resultSection").classList.remove("hidden");
   document.getElementById("scoreDisplay").textContent = score + " / 100 点";
   window.scrollTo(0, 0);
 }
 
-// 結果画面から大問1へ戻って確認
 function reviewAnswers() {
   document.getElementById("resultSection").classList.add("hidden");
   document.getElementById("section2").classList.remove("hidden");
