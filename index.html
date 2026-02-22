@@ -725,7 +725,7 @@ function showResult() {
     if (firstP) {
       const badge = document.createElement('span');
       badge.classList.add('question-result-badge', isCorrect ? 'badge-correct' : 'badge-incorrect');
-      badge.textContent = isCorrect ? '✓ 正解' : '✗ 不正解';
+      badge.textContent = isCorrect ? '正解' : '不正解';
       firstP.appendChild(badge);
     }
 
